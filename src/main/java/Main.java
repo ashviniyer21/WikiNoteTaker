@@ -1,8 +1,11 @@
+
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
-
-import java.io.*;
+import com.itextpdf.text.Image;
+import java.io.IOException;
 import java.net.URL;
+import java.io.FileOutputStream;
+import java.io.*;
 
 public class Main {
     public static void main(String... args) throws IOException, DocumentException {
@@ -30,8 +33,16 @@ public class Main {
 //                }
             }
         }
+        String imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/CIRCLE_LINES.svg/440px-CIRCLE_LINES.svg.png";
+        Image image = Image.getInstance(new URL(imageUrl));
+        document.add(image);
         String t = filter(text.toString());
+
         document.close();
+
+
+
+
     }
 
     private static String filter(String s){
