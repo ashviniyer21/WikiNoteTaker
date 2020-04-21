@@ -10,7 +10,7 @@ public class Main {
         URL url = new URL("https://en.wikipedia.org/w/index.php?action=raw&title=" + subject.replace(" ", "_"));
         StringBuilder text = new StringBuilder();
         Document document = new Document();
-        PdfWriter.getInstance(document, new FileOutputStream("PDF on " + subject));
+        PdfWriter.getInstance(document, new FileOutputStream("PDF on " + subject + ".pdf"));
         document.open();
         Font font = FontFactory.getFont(FontFactory.COURIER, 13, BaseColor.BLACK);
         try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()))) {
