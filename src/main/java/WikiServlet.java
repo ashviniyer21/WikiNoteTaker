@@ -7,9 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 
 @WebServlet(name = "WikiServlet", urlPatterns = {"/pdf"})
 public class WikiServlet extends HttpServlet {
@@ -18,7 +16,7 @@ public class WikiServlet extends HttpServlet {
         response.setContentType("text/html");
         String s = request.getParameter("name");
         try {
-            Filterer.getPDF(s);
+            Filterer.main();
         } catch (DocumentException e) {
             e.printStackTrace();
         }
@@ -44,7 +42,9 @@ public class WikiServlet extends HttpServlet {
         } catch (DocumentException e) {
             e.printStackTrace();
         }
+        downloadPDF(request, response);
         PrintWriter out = response.getWriter();
+//        out.println(Filterer.getHTMLStuff(s));
         out.println("<html>");
         out.println("<head>");
         out.println("<title>Title of the document</title>");
@@ -55,5 +55,23 @@ public class WikiServlet extends HttpServlet {
         out.println("</body>");
         out.println("</html>");
         out.flush();
+    }
+
+    public void downloadPDF(HttpServletRequest request, HttpServletResponse response)
+            throws IOException{
+        response.setContentType("application/pdf");
+        try {
+            File f = new File("notes.pdf");
+            FileInputStream fis = new FileInputStream(f);
+            DataOutputStream os = new DataOutputStream(response.getOutputStream());
+            response.setHeader("Content-Length",String.valueOf(f.length()));
+            byte[] buffer = new byte[1024];
+            int len = 0;
+            while ((len = fis.read(buffer)) >= 0) {
+                os.write(buffer, 0, len);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

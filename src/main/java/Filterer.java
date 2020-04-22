@@ -3,7 +3,6 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.Image;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.fit.pdfdom.PDFDomTree;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
@@ -13,7 +12,7 @@ import java.io.FileOutputStream;
 import java.io.*;
 
 public class Filterer {
-    private static void main(String... args) throws IOException, DocumentException {
+    public static void main(String... args) throws IOException, DocumentException {
         String subject = "Circle";
         URL url = new URL("https://en.wikipedia.org/w/index.php?action=raw&title=" + subject.replace(" ", "_"));
         StringBuilder text = new StringBuilder();
@@ -44,7 +43,7 @@ public class Filterer {
         String t = filter(text.toString());
 
         document.close();
-
+        System.out.println(getHTMLStuff(subject));
 
 
 
@@ -75,6 +74,20 @@ public class Filterer {
         document.close();
     }
 
+    public static String getHTMLStuff(String subject) throws IOException {
+        URL url = new URL("https://en.wikipedia.org/w/index.php?action=raw&title=" + subject.replace(" ", "_"));
+        StringBuilder text = new StringBuilder();
+        Font font = FontFactory.getFont(FontFactory.COURIER, 13, BaseColor.BLACK);
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()))) {
+            String line;
+            while (null != (line = br.readLine())) {
+                line = line.trim();
+                text.append(filter(line)).append("\n");
+            }
+        }
+        return text.toString();
+    }
+
     private static String filter(String s){
         StringBuilder newS = new StringBuilder();
         int count = 0;
@@ -95,13 +108,5 @@ public class Filterer {
             }
         }
         return newS.toString();
-    }
-
-    private static void generateHTMLFromPDF(String filename) throws IOException, ParserConfigurationException {
-        PDDocument pdf = PDDocument.load(new File(filename));
-        Writer output = new PrintWriter("src/main/webapp/pdf.html", "utf-8");
-        new PDFDomTree().writeText(pdf, output);
-
-        output.close();
     }
 }
