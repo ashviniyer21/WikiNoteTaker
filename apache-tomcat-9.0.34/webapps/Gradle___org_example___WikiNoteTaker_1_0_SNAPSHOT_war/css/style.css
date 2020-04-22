@@ -1,0 +1,98 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #121212;
+    color: white;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+h1{
+    font-size: 6vw;
+    line-height: 0;
+    letter-spacing: 0.25em;
+    text-shadow: 3px 3px red;
+}
+
+h2{
+    font-size: 24px;
+
+    line-height: 1.5;
+    color: red;
+    letter-spacing: 0.25em;
+}
+
+h3{
+    font-size: 28px;
+    line-height: 0;
+}
+
+#container{
+
+    min-width: 450px;
+    width: 50%;
+    margin: 3em auto;
+    border: 15px solid blue;
+    background-color: #34495e;
+    border-radius: 10px;
+
+}
+
+#form{
+
+    background-color: #191919;
+    border: 10px solid black;
+    width: 85%;
+    margin: 2em auto;
+    padding: 0;
+    color: white;
+
+}
+
+#form input[type = "text"] {
+    font-size: 24px;
+    border: 0;
+    background: none;
+    margin: 1em auto;
+    text-align: center;
+    border: 5px solid #00ffff;
+    padding: 0.5em 0.5em;
+    border-radius: 25px;
+    width: 40%;
+    outline: none;
+    color: white;
+    transition: 0.25s;
+}
+
+#form input[type = "text"]:focus{
+    width: 50%;
+    border-color: #2ecc71;
+
+}
+
+#submit{
+    border-top: 10px solid black;
+    width: 100%;
+
+}
+
+#form button{
+
+    border: 0;
+    font-size: 28px;
+    background: none;
+    background-color: transparent;
+    display: block;
+    margin: 1em auto;
+    text-align: center;
+    border: 5px solid #2ecc71;
+    padding: 0.5em 2em;
+    outline: none;
+    color: white;
+    border-radius: 25px;
+    transition: 0.25s;
+    cursor: pointer;
+}
+
+#form button:hover{
+    background: #2ecc71;
+}

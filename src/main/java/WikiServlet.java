@@ -36,7 +36,7 @@ public class WikiServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
-        String s = request.getParameter("name");
+        String s = request.getParameter("title");
         try {
             Filterer.getPDF(s);
         } catch (DocumentException e) {
