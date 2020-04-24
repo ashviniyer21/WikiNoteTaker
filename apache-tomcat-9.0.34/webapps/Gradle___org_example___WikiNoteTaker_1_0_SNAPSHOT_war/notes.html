@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!--    <link rel = "stylesheet" type = "text/css" href = "css/slides.css" />-->
+    <link rel = "stylesheet" type = "text/css" href = "css/slides.css" />
     <style>
         body{
             font-family: Arial, Helvetica, sans-serif;
-            background-color: #121212;
+            background-color: black;
             color: white;
             text-align: center;
         }
@@ -17,6 +17,12 @@
             font-size: 48px;
             line-height: 0;
             line-height: 1.5;
+        }
+
+        h2{
+            margin-top: 2em;
+            line-height: 1;
+            font-size: 32px;
         }
 
         #container{
@@ -31,6 +37,26 @@
             flex-direction: column;
         }
 
+        .introSlide{
+            text-align: center;
+            margin: 2em auto;
+            width: 90%;
+            border: 10px solid maroon;
+            border-radius: 5px;
+            background-color: black ;
+            line-height: 1.5;
+            color: white;
+            overflow: hidden;
+        }
+
+        .introSlideTitle{
+            font-size: 5vw;
+
+            padding: 1em ;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
         .slide{
             text-align: center;
             margin: 2em auto;
@@ -38,10 +64,6 @@
             border: 10px solid black;
             border-radius: 5px;
             background-color: #191919 ;
-            /*
-            display: flex;
-            flex-direction: column;
-            */
             line-height: 1.5;
             color: white;
             overflow: hidden;
@@ -51,13 +73,89 @@
 
             font-size: 24px;
             border: 2px solid white;
-
+            padding: 1em ;
+            outline: none;
         }
 
         .content{
             font-size: 18px;
             text-align: left;
             border: 2px solid white;
+            outline: none;
+        }
+
+        .settings{
+            border: 2px solid white;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+
+        }
+
+        .deleteButton{
+
+            width: 75px;
+            height: 50px;
+
+            margin: 1em;
+
+            text-align: center;
+            font-weight: bolder;
+            font-size: 1em;
+
+            background: none;
+            border: 3px solid red;
+            color: red;
+
+            cursor: pointer;
+            outline: none;
+            transition:  0.25s linear;
+
+
+        }
+
+        .deleteButton:hover{
+            color: white;
+            background-color: red;
+
+        }
+
+        .editButton{
+
+            width: 75px;
+            height: 50px;
+
+            margin: 1em;
+            text-transform: uppercase;
+            font-size: 1em;
+            text-align: center;
+            font-weight: bold;
+
+            background: none;
+            border: 3px solid #2ecc71;
+            color: #2ecc71;
+
+            cursor: pointer;
+            outline: none;
+            transition:  0.25s linear;
+
+        }
+
+        .editButton:hover{
+            color: white;
+            background: #2ecc71;
+        }
+
+        #download img{
+            margin: 1em auto 3em auto;
+            width: 200px;
+            opacity: 50%;
+            transition: 0.5s;
+        }
+
+        #download img:hover{
+            opacity: 100%;
+
         }
     </style>
     <title> Notes </title>
@@ -65,72 +163,156 @@
 </head>
 <body>
 <h1 id = "title"> </h1>
+
 <div id = "container">
-
 </div>
-<script>
-    const container = document.querySelector("#container");
-    const title = document.querySelector("#title");
 
-    let titleString = decodeURIComponent(window.location.search);
-    titleString = titleString.substring(titleString.indexOf("=") + 1);
+<form method="post" action="wiki" id = "form" autocomplete="off">
+    <h2> Download Notes </h2>
+    <div id = "download"> </div>
+    <div id = "submit">
+        <button> Create Notes </button> <br>
+    </div>
+</form>
 
-    title.textContent = titleString;
+    <script>
+        const container = document.querySelector("#container");
+        const title = document.querySelector("#title");
+        const downloadButton = document.querySelector("#download");
 
-    let slides = [];
+        let titleString = decodeURIComponent(window.location.search);
+        titleString = titleString.substring(titleString.indexOf("=") + 1);
+        title.textContent = "WIKI Notes";
+
+        downloadButton.addEventListener("click", function(){
+
+        });
+
+        let slides = [];
+
+        createTitleSlide();
+        createSampleSlides();
+
+        function slide(heading, body){
+            this.heading = heading;
+            this.body = body; // paragraph text
+        }
 
 
-    createSampleSlides();
 
-    function slide(heading, body){
-        this.heading = heading;
-        this.body = body; // paragraph text
-    }
+        function updateSlides(){
 
-    function createSlides(){
 
-        for(let i=0; i<slides.length; i++){
 
-            const slide = document.createElement("div");
-            slide.classList = "slide";
-            slide.value = i;
+            for(let i=0; i<slides.length; i++){
 
-            let slideTitle = slides[i].heading;
-            let slideBody = slides[i].body;
-            sentences = slideBody.split(". ");
+                // create slide
+                const slide = document.createElement("div");
+                slide.classList = "slide";
+                slide.value = i;
 
-            const sildeHeading = document.createElement("div");
-            sildeHeading.textContent = slideTitle;
-            sildeHeading.classList = "slideHeading";
+                let slideTitle = slides[i].heading;
+                let slideBody = slides[i].body;
 
-            const content = document.createElement("div");
-            content.classList = "content";
+                // parse slide body text
+                slideBody.replace("*", ".");
+                slideBody.replace('"', "'");
+                sentences = slideBody.split(". ");
 
-            const list = document.createElement("ul");  //create list for bullet points
+                //create slide heading
+                const sildeHeading = document.createElement("div");
+                sildeHeading.textContent = slideTitle;
+                sildeHeading.classList = "slideHeading";
+                sildeHeading.contentEditable = "true";
 
-            for(let j=0; j<sentences.length; j++){
-                const bullet = document.createElement("li");
-                bullet.classList = "bullet";
-                bullet.textContent = sentences[j];
-                list.appendChild(bullet);
+                // create slide content
+                const content = document.createElement("div");
+                content.classList = "content";
+                const list = document.createElement("ul");
+
+                // make bulletpoints
+                for(let j=0; j<sentences.length; j++){
+                    const bullet = document.createElement("li");
+                    bullet.classList = "bullet";
+                    bullet.textContent = sentences[j];
+                    list.appendChild(bullet);
+                }
+
+                content.appendChild(list);
+
+
+                const settings = document.createElement("div");
+                settings.classList = "settings";
+
+                const deleteButton = document.createElement("button");
+                deleteButton.classList = "deleteButton";
+                deleteButton.textContent = "X";
+                deleteButton.addEventListener("click", function() { container.removeChild(slide); });
+
+                const editButton = document.createElement("button");
+                editButton.classList = "editButton";
+                editButton.textContent = "Edit";
+
+                editButton.addEventListener("click", function() {
+                    if(editButton.textContent == "Edit"){
+                        slide.style.borderColor = "#2ecc71";
+                        content.contentEditable = "true";
+                        editButton.textContent = "Save";
+                    }
+                    else if(editButton.textContent == "Save" ){
+                        console.log("ioegw");
+                        slide.style.borderColor = "black"
+                        content.contentEditable = "false";
+                        editButton.textContent = "Edit";
+                    }
+                });
+
+                settings.appendChild(deleteButton);
+                settings.appendChild(editButton);
+
+
+
+                slide.appendChild(sildeHeading);
+                slide.appendChild(content);
+                slide.appendChild(settings);
+
+                container.appendChild(slide);
+
             }
 
-            content.appendChild(list);
 
-            slide.appendChild(sildeHeading);
-            slide.appendChild(content);
-            container.appendChild(slide);
 
         }
-    }
 
-    function createSampleSlides(){
-        slides.push(new slide("Definition", "A circle is a shape consisting of all points in a plane that are a given distance from a given point, the centre; equivalently it is the curve traced out by a point that moves in a plane so that its distance from a given point is constant. The distance between any point of the circle and the centre is called the radius. This article is about circles in Euclidean geometry, and, in particular, the Euclidean plane, except where otherwise noted. Specifically, a circle is a simple closed curve that divides the plane into two regions: an interior and an exterior. In everyday use, the term circle may be used interchangeably to refer to either the boundary of the figure, or to the whole figure including its interior; in strict technical usage, the circle is only the boundary and the whole figure is called a disc. A circle may also be defined as a special kind of ellipse in which the two foci are coincident and the eccentricity is 0, or the two-dimensional shape enclosing the most area per unit perimeter squared, using calculus of variations."));
-        slides.push(new slide("Euclid's definition", "A circle is a plane figure bounded by one curved line, and such that all straight lines drawn from a certain point within it to the bounding line, are equal. The bounding line is called its circumference and the point, its centre." ));
+        function createTitleSlide(){
 
-        createSlides();
+            const introSlide = document.createElement("div");
+            introSlide.classList = "introSlide";
+            container.appendChild(introSlide);
 
-    }
-</script>
+            const introSlideTitle = document.createElement("div");
+            introSlideTitle.classList = "introSlideTitle";
+            introSlideTitle.textContent = titleString;
+            introSlide.appendChild(introSlideTitle);
+
+            container.appendChild(introSlide);
+        }
+
+        function delete_slide(index){
+            slides.slice(index, 1);
+
+            updateSlides();
+        }
+
+        function createSampleSlides(){
+
+            slides.push(new slide("Definition", "A circle is a shape consisting of all points in a plane that are a given distance from a given point, the centre; equivalently it is the curve traced out by a point that moves in a plane so that its distance from a given point is constant. The distance between any point of the circle and the centre is called the radius. This article is about circles in Euclidean geometry, and, in particular, the Euclidean plane, except where otherwise noted. Specifically, a circle is a simple closed curve that divides the plane into two regions: an interior and an exterior. In everyday use, the term circle may be used interchangeably to refer to either the boundary of the figure, or to the whole figure including its interior; in strict technical usage, the circle is only the boundary and the whole figure is called a disc. A circle may also be defined as a special kind of ellipse in which the two foci are coincident and the eccentricity is 0, or the two-dimensional shape enclosing the most area per unit perimeter squared, using calculus of variations."));
+            slides.push(new slide("Euclid's definition", "A circle is a plane figure bounded by one curved line, and such that all straight lines drawn from a certain point within it to the bounding line, are equal. The bounding line is called its circumference and the point, its centre." ));
+
+            updateSlides();
+
+        }
+
+    </script>
 </body>
 </html>
