@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.*;
 
 public class Filterer {
+
     public static void main(String... args) throws IOException, DocumentException {
         String subject = "Circle";
         URL url = new URL("https://en.wikipedia.org/w/index.php?action=raw&title=" + subject.replace(" ", "_"));
