@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.io.FileOutputStream;
 import java.io.*;
+import java.util.HashMap;
 
 public class Filterer {
 
@@ -83,7 +84,7 @@ public class Filterer {
             String line;
             while (null != (line = br.readLine())) {
                 line = line.trim();
-                text.append(filter(line)).append("\n");
+                text.append((line)).append("\n");
             }
         }
         return text.toString();
@@ -93,14 +94,33 @@ public class Filterer {
         StringBuilder newS = new StringBuilder();
         int count = 0;
         int oCount = 0;
+        boolean skip = false;
         for(int i = 0; i < s.length(); i++){
+            char c = s.charAt(i);
+            char c2 = ' ';
+            if(i < s.length() - 1){
+                c2 = s.charAt(i+1);
+            }
             if(s.charAt(i) == '<'){
                 count++;
+
             } else if(s.charAt(i) == '{'){
                 oCount++;
             }
-            if(s.charAt(i) != '[' && s.charAt(i) != ']' && s.charAt(i) != '\'' && s.charAt(i) != '|' && count == 0 && oCount == 0){
-                newS.append(s.charAt(i));
+//            if(c == '<' || c == '{' || c =='[' ){
+//                c = '(';
+//            } else if(c == '>' || c == '}' || c == ']'){
+//                c = ')';
+//            }
+            if(c == '.' && c2 != ' ' && !Character.isDigit(c2)){
+                skip = true;
+            }  else if(c == '.'){
+                skip = false;
+            }
+            if((Character.isLetterOrDigit(c) || c == '.' || c == ' ' || c == '-' || c == '=' || c == ':' || c == '(' || c == ')') && !skip){
+                newS.append(c);
+            } else if(c == '|'){
+//                newS.append(" or ");
             }
             if(s.charAt(i) == '>'){
                 count--;
@@ -109,5 +129,35 @@ public class Filterer {
             }
         }
         return newS.toString();
+    }
+
+    public static HashMap<String, String> getValues(String subject) throws IOException {
+        URL url = new URL("https://en.wikipedia.org/w/index.php?action=raw&title=" + subject.replace(" ", "_"));
+        HashMap<String, String> values = new HashMap<>();
+        int count = 0;
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()))) {
+            String line;
+            StringBuilder text = new StringBuilder();
+            String header = "";
+            while (null != (line = br.readLine()) && count < 6) {
+                line = (line.trim());
+                if(line.length() > 0 && line.charAt(0) == '=' && !text.toString().equals("")){
+                    if(count > 0){
+                        if(count == 1){
+                            String stuff = filter(text.toString());
+                            values.put(stuff.substring(0, 17), stuff.substring(17));
+                        } else {
+                            values.put(header.replaceAll("=", ""), filter(text.toString()));
+                        }
+                        header = line;
+                        text = new StringBuilder();
+                    }
+                    count++;
+                } else {
+                    text.append(line);
+                }
+            }
+        }
+        return values;
     }
 }
