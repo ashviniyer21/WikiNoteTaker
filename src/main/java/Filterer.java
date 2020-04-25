@@ -134,9 +134,8 @@ public class Filterer {
                 newS += (c);
                 tempS += (c);
             }
-            if(tempS.equals("Image")){
+            if(tempS.equals("Image") || tempS.equals("Retrieved")){
                 bad = true;
-                newS.replaceAll("Image", "");
             }
             if(s.charAt(i) == '>'){
                 count--;

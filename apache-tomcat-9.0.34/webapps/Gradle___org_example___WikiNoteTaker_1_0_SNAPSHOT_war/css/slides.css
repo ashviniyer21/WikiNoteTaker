@@ -1,3 +1,4 @@
+@import url('//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css');
 body{
     font-family: Arial, Helvetica, sans-serif;
     background-color: black;
@@ -28,6 +29,7 @@ h2{
     border-radius: 10px;
     display: flex;
     flex-direction: column;
+    padding-bottom: 2em;
 }
 
 .introSlide{
@@ -137,6 +139,31 @@ h2{
 .editButton:hover{
     color: white;
     background: #2ecc71;
+}
+
+.addButton{
+
+    width: 50%;
+    height: 50px;
+
+
+
+    outline: none;
+    background: none;
+    cursor: pointer;
+    margin: auto;
+    font-size: 18px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: grey;
+    border: 5px solid #00ffff;
+    border-radius: 15px;
+    background-color: #121212;
+    transition: 0.25s;
+}
+
+.addButton:hover{
+    color: white;
 }
 
 #download img{

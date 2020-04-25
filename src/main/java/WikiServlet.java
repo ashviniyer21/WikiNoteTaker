@@ -194,6 +194,7 @@ public class WikiServlet extends HttpServlet {
                 "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
                 "    <link rel = \"stylesheet\" type = \"text/css\" href = \"css/slides.css\" />\n" +
                 "    <style>\n" +
+                "        @import url('//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css');\n" +
                 "        body{\n" +
                 "            font-family: Arial, Helvetica, sans-serif;\n" +
                 "            background-color: black;\n" +
@@ -224,6 +225,7 @@ public class WikiServlet extends HttpServlet {
                 "            border-radius: 10px;\n" +
                 "            display: flex;\n" +
                 "            flex-direction: column;\n" +
+                "            padding-bottom: 2em;\n" +
                 "        }\n" +
                 "\n" +
                 "        .introSlide{\n" +
@@ -335,6 +337,31 @@ public class WikiServlet extends HttpServlet {
                 "            background: #2ecc71;\n" +
                 "        }\n" +
                 "\n" +
+                "        .addButton{\n" +
+                "\n" +
+                "            width: 50%;\n" +
+                "            height: 50px;\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "            outline: none;\n" +
+                "            background: none;\n" +
+                "            cursor: pointer;\n" +
+                "            margin: auto;\n" +
+                "            font-size: 18px;\n" +
+                "            text-transform: uppercase;\n" +
+                "            font-weight: bold;\n" +
+                "            color: grey;\n" +
+                "            border: 5px solid #00ffff;\n" +
+                "            border-radius: 15px;\n" +
+                "            background-color: #121212;\n" +
+                "            transition: 0.25s;\n" +
+                "        }\n" +
+                "\n" +
+                "        .addButton:hover{\n" +
+                "            color: white;\n" +
+                "        }\n" +
+                "\n" +
                 "        #download img{\n" +
                 "            margin: 1em auto 3em auto;\n" +
                 "            width: 200px;\n" +
@@ -353,8 +380,7 @@ public class WikiServlet extends HttpServlet {
                 "<body>\n" +
                 "<h1 id = \"title\"> </h1>\n" +
                 "\n" +
-                "<div id = \"container\">\n" +
-                "</div>\n" +
+                "<div id = \"container\">  </div>\n" +
                 "\n" +
                 "<form method=\"post\" action=\"pdf\" id = \"form\" autocomplete=\"off\">\n" +
                 "    <h2> Download Notes </h2>\n" +
@@ -375,6 +401,8 @@ public class WikiServlet extends HttpServlet {
                 "\n" +
                 "        downloadButton.addEventListener(\"click\", function(){\n" +
                 "\n" +
+                "\n" +
+                "\n" +
                 "        });\n" +
                 "\n" +
                 "        let slides = [];\n" +
@@ -382,96 +410,149 @@ public class WikiServlet extends HttpServlet {
                 "        createTitleSlide();\n" +
                 "        createSampleSlides();\n" +
                 "\n" +
-                "        function slide(heading, body){\n" +
+                "        function Slide(heading, body, rendered){\n" +
                 "            this.heading = heading;\n" +
                 "            this.body = body; // paragraph text\n" +
+                "            this.rendered = false;\n" +
                 "        }\n" +
-                "\n" +
                 "\n" +
                 "\n" +
                 "        function updateSlides(){\n" +
                 "\n" +
-                "\n" +
-                "\n" +
                 "            for(let i=0; i<slides.length; i++){\n" +
                 "\n" +
-                "                // create slide\n" +
-                "                const slide = document.createElement(\"div\");\n" +
-                "                slide.classList = \"slide\";\n" +
-                "                slide.value = i;\n" +
+                "                if(!slides[i].rendered){\n" +
                 "\n" +
-                "                let slideTitle = slides[i].heading;\n" +
-                "                let slideBody = slides[i].body;\n" +
+                "                    if(i!=0){\n" +
                 "\n" +
-                "                // parse slide body text\n" +
-                "                slideBody.replace(\"*\", \".\");\n" +
-                "                slideBody.replace('\"', \"'\");\n" +
-                "                sentences = slideBody.split(\". \");\n" +
+                "                        const slide = document.createElement(\"div\");\n" +
+                "                        slide.classList = \"slide\";\n" +
+                "                        slide.value = i;\n" +
                 "\n" +
-                "                //create slide heading\n" +
-                "                const sildeHeading = document.createElement(\"div\");\n" +
-                "                sildeHeading.textContent = slideTitle;\n" +
-                "                sildeHeading.classList = \"slideHeading\";\n" +
-                "                sildeHeading.contentEditable = \"true\";\n" +
+                "                        let slideTitle = slides[i].heading;\n" +
+                "                        let slideBody = slides[i].body;\n" +
                 "\n" +
-                "                // create slide content\n" +
-                "                const content = document.createElement(\"div\");\n" +
-                "                content.classList = \"content\";\n" +
-                "                const list = document.createElement(\"ul\");\n" +
+                "                        // parse slide body text\n" +
+                "                        slideBody.replace(\"*\", \".\");\n" +
+                "                        slideBody.replace('\"', \"'\");\n" +
+                "                        sentences = slideBody.split(\". \");\n" +
                 "\n" +
-                "                // make bulletpoints\n" +
-                "                for(let j=0; j<sentences.length; j++){\n" +
-                "                    const bullet = document.createElement(\"li\");\n" +
-                "                    bullet.classList = \"bullet\";\n" +
-                "                    bullet.textContent = sentences[j];\n" +
-                "                    list.appendChild(bullet);\n" +
-                "                }\n" +
+                "                        //create slide heading\n" +
+                "                        const sildeHeading = document.createElement(\"div\");\n" +
+                "                        sildeHeading.textContent = slideTitle;\n" +
+                "                        sildeHeading.classList = \"slideHeading\";\n" +
                 "\n" +
-                "                content.appendChild(list);\n" +
+                "                        // create slide content\n" +
+                "                        const content = document.createElement(\"div\");\n" +
+                "                        content.classList = \"content\";\n" +
+                "                        const list = document.createElement(\"ul\");\n" +
+                "\n" +
+                "                        // make bulletpoints\n" +
+                "                        for(let j=0; j<sentences.length; j++){\n" +
+                "                            const bullet = document.createElement(\"li\");\n" +
+                "                            bullet.classList = \"bullet\";\n" +
+                "                            bullet.textContent = sentences[j];\n" +
+                "                            if(bullet.textContent != \"\") list.appendChild(bullet);\n" +
+                "                        }\n" +
                 "\n" +
                 "\n" +
-                "                const settings = document.createElement(\"div\");\n" +
-                "                settings.classList = \"settings\";\n" +
                 "\n" +
-                "                const deleteButton = document.createElement(\"button\");\n" +
-                "                deleteButton.classList = \"deleteButton\";\n" +
-                "                deleteButton.textContent = \"X\";\n" +
-                "                deleteButton.addEventListener(\"click\", function() { container.removeChild(slide); });\n" +
+                "                        content.appendChild(list);\n" +
                 "\n" +
-                "                const editButton = document.createElement(\"button\");\n" +
-                "                editButton.classList = \"editButton\";\n" +
-                "                editButton.textContent = \"Edit\";\n" +
                 "\n" +
-                "                editButton.addEventListener(\"click\", function() {\n" +
-                "                    if(editButton.textContent == \"Edit\"){\n" +
-                "                        slide.style.borderColor = \"#2ecc71\";\n" +
-                "                        content.contentEditable = \"true\";\n" +
-                "                        editButton.textContent = \"Save\";\n" +
-                "                    }\n" +
-                "                    else if(editButton.textContent == \"Save\" ){\n" +
-                "                        console.log(\"ioegw\");\n" +
-                "                        slide.style.borderColor = \"black\"\n" +
-                "                        content.contentEditable = \"false\";\n" +
+                "\n" +
+                "                        const settings = document.createElement(\"div\");\n" +
+                "                        settings.classList = \"settings\";\n" +
+                "\n" +
+                "                        const deleteButton = document.createElement(\"button\");\n" +
+                "                        deleteButton.classList = \"deleteButton\";\n" +
+                "                        deleteButton.textContent = \"X\";\n" +
+                "                        deleteButton.addEventListener(\"click\", function() {\n" +
+                "\n" +
+                "                            let c = confirm(\"Delete \" + sildeHeading.textContent + \" slide? \");\n" +
+                "\n" +
+                "                            if(c){\n" +
+                "                                container.removeChild(slide);\n" +
+                "                                container.removeChild(addButton);\n" +
+                "                                slides.splice(i, 1);\n" +
+                "                                updateSlides();\n" +
+                "                            }\n" +
+                "\n" +
+                "                        });\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "                        const editButton = document.createElement(\"button\");\n" +
+                "                        editButton.classList = \"editButton\";\n" +
                 "                        editButton.textContent = \"Edit\";\n" +
+                "\n" +
+                "                        editButton.addEventListener(\"click\", function() {\n" +
+                "                            if(editButton.textContent == \"Edit\"){\n" +
+                "                                slide.style.borderColor = \"#2ecc71\";\n" +
+                "                                content.contentEditable = \"true\";\n" +
+                "                                sildeHeading.contentEditable = \"true\";\n" +
+                "                                editButton.textContent = \"Save\";\n" +
+                "                            }\n" +
+                "                            else if(editButton.textContent == \"Save\" ){\n" +
+                "                                slide.style.borderColor = \"black\"\n" +
+                "                                content.contentEditable = \"false\";\n" +
+                "                                sildeHeading.contentEditable = \"false\";\n" +
+                "                                editButton.textContent = \"Edit\";\n" +
+                "\n" +
+                "                                slides[i].heading = sildeHeading.textContent;\n" +
+                "                                console.log(slides[i].body);\n" +
+                "                                slides[i].body = \"\";\n" +
+                "                                for(let j=0; j<list.childNodes.length; j++) slides[i].body += list.childNodes[j].textContent + \". \"; }\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "                        });\n" +
+                "\n" +
+                "                        settings.appendChild(deleteButton);\n" +
+                "                        settings.appendChild(editButton);\n" +
+                "\n" +
+                "                        slide.appendChild(sildeHeading);\n" +
+                "                        slide.appendChild(content);\n" +
+                "                        slide.appendChild(settings);\n" +
+                "\n" +
+                "                        container.appendChild(slide);\n" +
+                "\n" +
                 "                    }\n" +
-                "                });\n" +
-                "\n" +
-                "                settings.appendChild(deleteButton);\n" +
-                "                settings.appendChild(editButton);\n" +
                 "\n" +
                 "\n" +
+                "                    const addButton = document.createElement(\"button\");\n" +
+                "                    addButton.classList = \"addButton\";\n" +
+                "                    addButton.textContent = \"Add Slide\";\n" +
                 "\n" +
-                "                slide.appendChild(sildeHeading);\n" +
-                "                slide.appendChild(content);\n" +
-                "                slide.appendChild(settings);\n" +
+                "                    addButton.addEventListener(\"click\", function(){\n" +
                 "\n" +
-                "                container.appendChild(slide);\n" +
+                "                        let count = container.childNodes.length;\n" +
                 "\n" +
+                "                        while(count > 2){\n" +
+                "                            container.removeChild(container.lastChild);\n" +
+                "                            count--;\n" +
+                "                        }\n" +
+                "\n" +
+                "                        for(let j=0; j<slides.length; j++) slides[j].rendered = false;\n" +
+                "                        slides.splice(i+1, 0,  new Slide(\" \", \" \", false));\n" +
+                "                        updateSlides();\n" +
+                "\n" +
+                "                    });\n" +
+                "\n" +
+                "                    container.appendChild(addButton);\n" +
+                "                    slides[i].rendered = true;\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "                }\n" +
                 "            }\n" +
-                "\n" +
+                "            // console.log(slides);\n" +
                 "\n" +
                 "\n" +
                 "        }\n" +
+                "\n" +
                 "\n" +
                 "        function createTitleSlide(){\n" +
                 "\n" +
@@ -484,30 +565,37 @@ public class WikiServlet extends HttpServlet {
                 "            introSlideTitle.textContent = \"" + s + "\";\n" +
                 "            introSlide.appendChild(introSlideTitle);\n" +
                 "\n" +
+                "            slides.push(introSlide);\n" +
                 "            container.appendChild(introSlide);\n" +
+                "\n" +
                 "        }\n" +
                 "\n" +
-                "        function delete_slide(index){\n" +
-                "            slides.slice(index, 1);\n" +
                 "\n" +
-                "            updateSlides();\n" +
-                "        }\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "\n" +
                 "\n" +
                 "        function createSampleSlides(){\n" +
                 "\n";
                 HashMap<String, String> slideContent = Filterer.getValues(s);
+                System.out.println(slideContent.size());
                 for(String value: slideContent.keySet()){
-                    lastHTMLCode += "slides.push(new slide(\"" + oFilter(value) + "\", \"" + oFilter(slideContent.get(value)) + "\" ));";
+                    lastHTMLCode +=
+                            "slides.push(new Slide(\"" + value + "\", \"" + slideContent.get(value) + "\", false ));";
+                            //"slides.push(new slide(\"" + value + "\", \"" + slideContent.get(value) + "\" ));"
+                     ;
                 }
                 lastHTMLCode += "\n" +
                 "            updateSlides();\n" +
                 "\n" +
                 "        }\n" +
-                "\n" +
                 "    </script>\n" +
                 "</body>\n" +
-                "</html>";
-                out.println(lastHTMLCode);
+                "</html>\n" +
+                "\n";
+
+        out.println(lastHTMLCode);
         out.flush();
     }
 
