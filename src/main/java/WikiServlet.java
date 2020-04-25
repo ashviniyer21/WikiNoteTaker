@@ -10,30 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.HashMap;
 
-@WebServlet(name = "WikiServlet", urlPatterns = {"/pdf"})
+@WebServlet(name = "WikiServlet", urlPatterns = {"/wiki"})
 public class WikiServlet extends HttpServlet {
     private static String lastString = "";
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("text/html");
-        String s = request.getParameter("name");
-        try {
-            Filterer.main();
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        }
-        PrintWriter out = response.getWriter();
-        out.println("<html>");
-        out.println("<head>");
-        out.println("<title>Title of the document</title>");
-        out.println("</head>");
-        out.println("<body>");
-        out.println("<h1>PDF Example</h1>");
-        out.println("<p>Open a PDF file <a href=\"notes.pdf\">example</a>.</p>");
-        out.println("</body>");
-        out.println("</html>");
-        out.flush();
-    }
+    private static String lastHTMLCode = "";
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -207,7 +187,7 @@ public class WikiServlet extends HttpServlet {
         /*
         Version 3
          */
-        out.println("<!DOCTYPE html>\n" +
+        lastHTMLCode = "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
                 "<head>\n" +
                 "    <meta charset=\"UTF-8\">\n" +
@@ -376,7 +356,7 @@ public class WikiServlet extends HttpServlet {
                 "<div id = \"container\">\n" +
                 "</div>\n" +
                 "\n" +
-                "<form method=\"post\" action=\"wiki\" id = \"form\" autocomplete=\"off\">\n" +
+                "<form method=\"post\" action=\"pdf\" id = \"form\" autocomplete=\"off\">\n" +
                 "    <h2> Download Notes </h2>\n" +
                 "    <div id = \"download\"> </div>\n" +
                 "    <div id = \"submit\">\n" +
@@ -514,19 +494,20 @@ public class WikiServlet extends HttpServlet {
                 "        }\n" +
                 "\n" +
                 "        function createSampleSlides(){\n" +
-                "\n");
+                "\n";
                 HashMap<String, String> slideContent = Filterer.getValues(s);
                 for(String value: slideContent.keySet()){
-                    out.println("slides.push(new slide(\"" + oFilter(value) + "\", \"" + oFilter(slideContent.get(value)) + "\" ));");
+                    lastHTMLCode += "slides.push(new slide(\"" + oFilter(value) + "\", \"" + oFilter(slideContent.get(value)) + "\" ));";
                 }
-                out.println("\n" +
+                lastHTMLCode += "\n" +
                 "            updateSlides();\n" +
                 "\n" +
                 "        }\n" +
                 "\n" +
                 "    </script>\n" +
                 "</body>\n" +
-                "</html>");
+                "</html>";
+                out.println(lastHTMLCode);
         out.flush();
     }
 
@@ -559,5 +540,9 @@ public class WikiServlet extends HttpServlet {
 
     public static String getLastString(){
         return lastString;
+    }
+
+    public static String getLastHTMLCode(){
+        return lastHTMLCode;
     }
 }

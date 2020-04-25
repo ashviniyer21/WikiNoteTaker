@@ -1,0 +1,322 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="generator" content="HTML Tidy, see www.w3.org" />
+<meta charset="UTF-8" />
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/slides.css" />
+<style type="text/css">
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: black;
+            color: white;
+            text-align: center;
+        }
+
+        h1{
+            text-transform: uppercase;
+            font-size: 48px;
+            line-height: 0;
+            line-height: 1.5;
+        }
+
+        h2{
+            margin-top: 2em;
+            line-height: 1;
+            font-size: 32px;
+        }
+
+        #container{
+
+            margin: 1em auto;
+            width: 75%;
+            min-width: 450px;
+            border: 15px solid red;
+            background-color: tomato;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .introSlide{
+            text-align: center;
+            margin: 2em auto;
+            width: 90%;
+            border: 10px solid maroon;
+            border-radius: 5px;
+            background-color: black ;
+            line-height: 1.5;
+            color: white;
+            overflow: hidden;
+        }
+
+        .introSlideTitle{
+            font-size: 5vw;
+
+            padding: 1em ;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .slide{
+            text-align: center;
+            margin: 2em auto;
+            width: 90%;
+            border: 10px solid black;
+            border-radius: 5px;
+            background-color: #191919 ;
+            line-height: 1.5;
+            color: white;
+            overflow: hidden;
+        }
+
+        .slideHeading{
+
+            font-size: 24px;
+            border: 2px solid white;
+            padding: 1em ;
+            outline: none;
+        }
+
+        .content{
+            font-size: 18px;
+            text-align: left;
+            border: 2px solid white;
+            outline: none;
+        }
+
+        .settings{
+            border: 2px solid white;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+
+        }
+
+        .deleteButton{
+
+            width: 75px;
+            height: 50px;
+
+            margin: 1em;
+
+            text-align: center;
+            font-weight: bolder;
+            font-size: 1em;
+
+            background: none;
+            border: 3px solid red;
+            color: red;
+
+            cursor: pointer;
+            outline: none;
+            transition:  0.25s linear;
+
+
+        }
+
+        .deleteButton:hover{
+            color: white;
+            background-color: red;
+
+        }
+
+        .editButton{
+
+            width: 75px;
+            height: 50px;
+
+            margin: 1em;
+            text-transform: uppercase;
+            font-size: 1em;
+            text-align: center;
+            font-weight: bold;
+
+            background: none;
+            border: 3px solid #2ecc71;
+            color: #2ecc71;
+
+            cursor: pointer;
+            outline: none;
+            transition:  0.25s linear;
+
+        }
+
+        .editButton:hover{
+            color: white;
+            background: #2ecc71;
+        }
+
+        #download img{
+            margin: 1em auto 3em auto;
+            width: 200px;
+            opacity: 50%;
+            transition: 0.5s;
+        }
+
+        #download img:hover{
+            opacity: 100%;
+
+        }
+    
+</style>
+
+<title>Notes</title>
+</head>
+<body>
+<h1 id="title"></h1>
+
+<div id="container"></div>
+
+<form method="post" action="pdf" id="form" autocomplete="off">
+<h2>Download Notes</h2>
+
+<div id="download"></div>
+
+<div id="submit"><button>Create Notes</button><br />
+</div>
+</form>
+
+<script type="text/javascript">
+        const container = document.querySelector("#container");
+        const title = document.querySelector("#title");
+        const downloadButton = document.querySelector("#download");
+
+        let titleString = decodeURIComponent(window.location.search);
+        titleString = titleString.substring(titleString.indexOf("=") + 1);
+        title.textContent = "WIKI Notes";
+
+        downloadButton.addEventListener("click", function(){
+
+        });
+
+        let slides = [];
+
+        createTitleSlide();
+        createSampleSlides();
+
+        function slide(heading, body){
+            this.heading = heading;
+            this.body = body; // paragraph text
+        }
+
+
+
+        function updateSlides(){
+
+
+
+            for(let i=0; i<slides.length; i++){
+
+                // create slide
+                const slide = document.createElement("div");
+                slide.classList = "slide";
+                slide.value = i;
+
+                let slideTitle = slides[i].heading;
+                let slideBody = slides[i].body;
+
+                // parse slide body text
+                slideBody.replace("*", ".");
+                slideBody.replace('"', "'");
+                sentences = slideBody.split(". ");
+
+                //create slide heading
+                const sildeHeading = document.createElement("div");
+                sildeHeading.textContent = slideTitle;
+                sildeHeading.classList = "slideHeading";
+                sildeHeading.contentEditable = "true";
+
+                // create slide content
+                const content = document.createElement("div");
+                content.classList = "content";
+                const list = document.createElement("ul");
+
+                // make bulletpoints
+                for(let j=0; j<sentences.length; j++){
+                    const bullet = document.createElement("li");
+                    bullet.classList = "bullet";
+                    bullet.textContent = sentences[j];
+                    list.appendChild(bullet);
+                }
+
+                content.appendChild(list);
+
+
+                const settings = document.createElement("div");
+                settings.classList = "settings";
+
+                const deleteButton = document.createElement("button");
+                deleteButton.classList = "deleteButton";
+                deleteButton.textContent = "X";
+                deleteButton.addEventListener("click", function() { container.removeChild(slide); });
+
+                const editButton = document.createElement("button");
+                editButton.classList = "editButton";
+                editButton.textContent = "Edit";
+
+                editButton.addEventListener("click", function() {
+                    if(editButton.textContent == "Edit"){
+                        slide.style.borderColor = "#2ecc71";
+                        content.contentEditable = "true";
+                        editButton.textContent = "Save";
+                    }
+                    else if(editButton.textContent == "Save" ){
+                        console.log("ioegw");
+                        slide.style.borderColor = "black"
+                        content.contentEditable = "false";
+                        editButton.textContent = "Edit";
+                    }
+                });
+
+                settings.appendChild(deleteButton);
+                settings.appendChild(editButton);
+
+
+
+                slide.appendChild(sildeHeading);
+                slide.appendChild(content);
+                slide.appendChild(settings);
+
+                container.appendChild(slide);
+
+            }
+
+
+
+        }
+
+        function createTitleSlide(){
+
+            const introSlide = document.createElement("div");
+            introSlide.classList = "introSlide";
+            container.appendChild(introSlide);
+
+            const introSlideTitle = document.createElement("div");
+            introSlideTitle.classList = "introSlideTitle";
+            introSlideTitle.textContent = "Circle";
+            introSlide.appendChild(introSlideTitle);
+
+            container.appendChild(introSlide);
+        }
+
+        function delete_slide(index){
+            slides.slice(index, 1);
+
+            updateSlides();
+        }
+
+        function createSampleSlides(){
+
+slides.push(new slide(". The distance be", "tween any point of the circle and the centre is called the radius. This article is about circles in Euclidean geometry and in particular the Euclidean plane except where otherwise noted. In everyday use the term circle may be used interchangeably to refer to either the boundary of the figure or to the whole figure including its interior in strict technical usage the circle is only the boundary and the whole figure is called a Disk (mathematics)disc" ));slides.push(new slide("Terminology", " Annulus (mathematics)Annulus a ring-shaped object the region bounded by two concentric circles. Specifying two end points of an arc and a center allows for two arcs that together make up a full circle. This is the largest distance between any two points on the circle. It is a special case of a chord namely the longest chord for a given circle and its length is twice the length of a radius. The length of the chord imposes a lower boundary on the diameter of possible arcs. Sometimes the term segment is used only for regions not containing the center of the circle to which their arc belongs to. In non-technical common usage it may mean the interior of the  two dimensional region bounded by a diameter and one of its arcs that is technically called a half-Disk (mathematics)disc. A half-disc is a special case of a Circular segmentsegment namely the largest one" ));slides.push(new slide("Analytic results", "" ));slides.push(new slide("Topological definition", "In the field of topology a circle isnt limited to the geometric concept but to all of its homeomorphisms. Two topological circles are equivalent if one can be transformed into the other via a deformation of Real coordinate spaceR3 upon itself (known as an ambient isotopy)" ));slides.push(new slide("History", "ImageGod the Geometer. Notice also the circular shape of the Halo (religious iconography)halo.04.00573Aentry3Dkri2Fkos krikos  Henry George Liddell Robert Scott A Greek-English Lexicon on Perseus The origins of the words circus and wiktcircuitcircuit are closely related. Natural circles would have been observed such as the Moon Sun and a short plant stalk blowing in the wind on sand which forms a circle shape in the sand. The circle is the basis for the wheel which with related inventions such as gears makes much of modern machinery possible. In mathematics the study of the circle has helped inspire the development of geometry astronomy and calculus. Thomas Taylor (1816) Vol. 2 Ch. 2 Of PlatoSome highlights in the history of the circle are 1700 BCE  The Rhind papyrus gives a method to find the area of a circular field. The result corresponds to  (3.16049. History. Retrieved on 2012-05-03. Plato explains the perfect circle and how it is different from any drawing words definition or explanation. History. Retrieved on 2012-05-03" ));
+            updateSlides();
+
+        }
+
+    
+</script>
+</body>
+</html>
+

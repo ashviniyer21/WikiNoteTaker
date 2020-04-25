@@ -2,18 +2,18 @@
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.Image;
-import org.apache.pdfbox.pdmodel.PDDocument;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.io.FileOutputStream;
 import java.io.*;
 import java.util.HashMap;
+import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+import org.jsoup.Jsoup;
+import org.w3c.tidy.Tidy;
 
 public class Filterer {
-
+    private static final String API_KEY = "869c9de4e1ea4246968439ef10d55c36";
     public static void main(String... args) throws IOException, DocumentException {
         String subject = "Circle";
         URL url = new URL("https://en.wikipedia.org/w/index.php?action=raw&title=" + subject.replace(" ", "_"));
@@ -89,12 +89,21 @@ public class Filterer {
         }
         return text.toString();
     }
-
+    private static String initialFilter(String s){
+//        if(s!= null){
+//            org.jsoup.nodes.Document document = Jsoup.parse(s);
+//            document.select("img").remove();
+//            s = document.toString();
+//        }
+        return s;
+    }
     private static String filter(String s){
-        StringBuilder newS = new StringBuilder();
+        String newS = "";
+        String tempS = "";
         int count = 0;
         int oCount = 0;
         boolean skip = false;
+        boolean bad = false;
         for(int i = 0; i < s.length(); i++){
             char c = s.charAt(i);
             char c2 = ' ';
@@ -112,15 +121,22 @@ public class Filterer {
 //            } else if(c == '>' || c == '}' || c == ']'){
 //                c = ')';
 //            }
+            if (c == '.' && c2 == ' ') {
+                tempS = "";
+                bad = false;
+            }
             if(c == '.' && c2 != ' ' && !Character.isDigit(c2)){
                 skip = true;
             }  else if(c == '.'){
                 skip = false;
             }
-            if((Character.isLetterOrDigit(c) || c == '.' || c == ' ' || c == '-' || c == '=' || c == ':' || c == '(' || c == ')') && !skip){
-                newS.append(c);
-            } else if(c == '|'){
-//                newS.append(" or ");
+            if((Character.isLetterOrDigit(c) || c == '.' || c == ' ' || c == '-' || c == '=' || c == '(' || c == ')') && !skip && count == 0 && oCount == 0 && !bad){
+                newS += (c);
+                tempS += (c);
+            }
+            if(tempS.equals("Image")){
+                bad = true;
+                newS.replaceAll("Image", "");
             }
             if(s.charAt(i) == '>'){
                 count--;
@@ -132,32 +148,71 @@ public class Filterer {
     }
 
     public static HashMap<String, String> getValues(String subject) throws IOException {
-        URL url = new URL("https://en.wikipedia.org/w/index.php?action=raw&title=" + subject.replace(" ", "_"));
         HashMap<String, String> values = new HashMap<>();
+        URL url;
+        try {
+            url = new URL("https://en.wikipedia.org/w/index.php?action=raw&title=" + subject.replace(" ", "_"));
+        } catch (Exception e){
+            return values;
+        }
         int count = 0;
         try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()))) {
             String line;
             StringBuilder text = new StringBuilder();
             String header = "";
-            while (null != (line = br.readLine()) && count < 6) {
+            boolean hasCategory = false;
+            while (null != (line = br.readLine()) && count < 8) {
                 line = (line.trim());
-                if(line.length() > 0 && line.charAt(0) == '=' && !text.toString().equals("")){
-                    if(count > 0){
+                if(line.length() > 0 && line.charAt(0) == '='){
+                    hasCategory = true;
+                    if(count > 1){
                         if(count == 1){
-                            String stuff = filter(text.toString());
-                            values.put(stuff.substring(0, 17), stuff.substring(17));
+//                            String stuff = filter(text.toString());
+//                            values.put(stuff.substring(0, 17), stuff.substring(17));
                         } else {
-                            values.put(header.replaceAll("=", ""), filter(text.toString()));
+                            if(isGoodToPut(header, filter(initialFilter(text.toString())))){
+                                values.put(header.replaceAll("=", ""), filter(initialFilter(text.toString())).replaceAll("Image", "").replaceAll("Retrieved", ""));
+                            } else {
+                                count--;
+                            }
                         }
                         header = line;
                         text = new StringBuilder();
                     }
                     count++;
                 } else {
-                    text.append(line);
+                    text.append(line).append("\n");
                 }
             }
         }
         return values;
+    }
+    public static void getPDF2(String htmlCode) throws Exception {
+//        Document document = new Document();
+//        PdfWriter.getInstance(document, new FileOutputStream("notes.pdf"));
+//        document.open();
+//        document.close();
+        Tidy tidy = new Tidy();
+        tidy.setXHTML(true);
+        tidy.setQuiet(true);
+        tidy.setShowWarnings(false);
+        PdfRendererBuilder builder = new PdfRendererBuilder();
+        builder.useFastMode();
+        builder.withUri(tidy.parseDOM(new ByteArrayInputStream(htmlCode.getBytes()), new FileOutputStream("document.xml")).toString());
+        builder.toStream(new FileOutputStream("notes.pdf"));
+        builder.run();
+    }
+
+    private static boolean isGoodToPut(String header, String body){
+        if(header.replaceAll("=", "").equals("")){
+            return false;
+        }
+        int perCount = 0;
+        for(int i = 0; i < body.length()-1; i++){
+            if(body.charAt(i) == '.' && body.charAt(i+1) == ' '){
+                perCount++;
+            }
+        }
+        return perCount > 2;
     }
 }

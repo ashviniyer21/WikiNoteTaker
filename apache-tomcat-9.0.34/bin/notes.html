@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel = "stylesheet" type = "text/css" href = "css/slides.css" />
+    <style>
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: black;
+            color: white;
+            text-align: center;
+        }
+
+        h1{
+            text-transform: uppercase;
+            font-size: 48px;
+            line-height: 0;
+            line-height: 1.5;
+        }
+
+        h2{
+            margin-top: 2em;
+            line-height: 1;
+            font-size: 32px;
+        }
+
+        #container{
+
+            margin: 1em auto;
+            width: 75%;
+            min-width: 450px;
+            border: 15px solid red;
+            background-color: tomato;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .introSlide{
+            text-align: center;
+            margin: 2em auto;
+            width: 90%;
+            border: 10px solid maroon;
+            border-radius: 5px;
+            background-color: black ;
+            line-height: 1.5;
+            color: white;
+            overflow: hidden;
+        }
+
+        .introSlideTitle{
+            font-size: 5vw;
+
+            padding: 1em ;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .slide{
+            text-align: center;
+            margin: 2em auto;
+            width: 90%;
+            border: 10px solid black;
+            border-radius: 5px;
+            background-color: #191919 ;
+            line-height: 1.5;
+            color: white;
+            overflow: hidden;
+        }
+
+        .slideHeading{
+
+            font-size: 24px;
+            border: 2px solid white;
+            padding: 1em ;
+            outline: none;
+        }
+
+        .content{
+            font-size: 18px;
+            text-align: left;
+            border: 2px solid white;
+            outline: none;
+        }
+
+        .settings{
+            border: 2px solid white;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+
+        }
+
+        .deleteButton{
+
+            width: 75px;
+            height: 50px;
+
+            margin: 1em;
+
+            text-align: center;
+            font-weight: bolder;
+            font-size: 1em;
+
+            background: none;
+            border: 3px solid red;
+            color: red;
+
+            cursor: pointer;
+            outline: none;
+            transition:  0.25s linear;
+
+
+        }
+
+        .deleteButton:hover{
+            color: white;
+            background-color: red;
+
+        }
+
+        .editButton{
+
+            width: 75px;
+            height: 50px;
+
+            margin: 1em;
+            text-transform: uppercase;
+            font-size: 1em;
+            text-align: center;
+            font-weight: bold;
+
+            background: none;
+            border: 3px solid #2ecc71;
+            color: #2ecc71;
+
+            cursor: pointer;
+            outline: none;
+            transition:  0.25s linear;
+
+        }
+
+        .editButton:hover{
+            color: white;
+            background: #2ecc71;
+        }
+
+        #download img{
+            margin: 1em auto 3em auto;
+            width: 200px;
+            opacity: 50%;
+            transition: 0.5s;
+        }
+
+        #download img:hover{
+            opacity: 100%;
+
+        }
+    </style>
+    <title> Notes </title>
+
+</head>
+<body>
+<h1 id = "title"> </h1>
+
+<div id = "container">
+</div>
+
+<form method="post" action="pdf" id = "form" autocomplete="off">
+    <h2> Download Notes </h2>
+    <div id = "download"> </div>
+    <div id = "submit">
+        <button> Create Notes </button> <br>
+    </div>
+</form>
+
+    <script>
+        const container = document.querySelector("#container");
+        const title = document.querySelector("#title");
+        const downloadButton = document.querySelector("#download");
+
+        let titleString = decodeURIComponent(window.location.search);
+        titleString = titleString.substring(titleString.indexOf("=") + 1);
+        title.textContent = "WIKI Notes";
+
+        downloadButton.addEventListener("click", function(){
+
+        });
+
+        let slides = [];
+
+        createTitleSlide();
+        createSampleSlides();
+
+        function slide(heading, body){
+            this.heading = heading;
+            this.body = body; // paragraph text
+        }
+
+
+
+        function updateSlides(){
+
+
+
+            for(let i=0; i<slides.length; i++){
+
+                // create slide
+                const slide = document.createElement("div");
+                slide.classList = "slide";
+                slide.value = i;
+
+                let slideTitle = slides[i].heading;
+                let slideBody = slides[i].body;
+
+                // parse slide body text
+                slideBody.replace("*", ".");
+                slideBody.replace('"', "'");
+                sentences = slideBody.split(". ");
+
+                //create slide heading
+                const sildeHeading = document.createElement("div");
+                sildeHeading.textContent = slideTitle;
+                sildeHeading.classList = "slideHeading";
+                sildeHeading.contentEditable = "true";
+
+                // create slide content
+                const content = document.createElement("div");
+                content.classList = "content";
+                const list = document.createElement("ul");
+
+                // make bulletpoints
+                for(let j=0; j<sentences.length; j++){
+                    const bullet = document.createElement("li");
+                    bullet.classList = "bullet";
+                    bullet.textContent = sentences[j];
+                    list.appendChild(bullet);
+                }
+
+                content.appendChild(list);
+
+
+                const settings = document.createElement("div");
+                settings.classList = "settings";
+
+                const deleteButton = document.createElement("button");
+                deleteButton.classList = "deleteButton";
+                deleteButton.textContent = "X";
+                deleteButton.addEventListener("click", function() { container.removeChild(slide); });
+
+                const editButton = document.createElement("button");
+                editButton.classList = "editButton";
+                editButton.textContent = "Edit";
+
+                editButton.addEventListener("click", function() {
+                    if(editButton.textContent == "Edit"){
+                        slide.style.borderColor = "#2ecc71";
+                        content.contentEditable = "true";
+                        editButton.textContent = "Save";
+                    }
+                    else if(editButton.textContent == "Save" ){
+                        console.log("ioegw");
+                        slide.style.borderColor = "black"
+                        content.contentEditable = "false";
+                        editButton.textContent = "Edit";
+                    }
+                });
+
+                settings.appendChild(deleteButton);
+                settings.appendChild(editButton);
+
+
+
+                slide.appendChild(sildeHeading);
+                slide.appendChild(content);
+                slide.appendChild(settings);
+
+                container.appendChild(slide);
+
+            }
+
+
+
+        }
+
+        function createTitleSlide(){
+
+            const introSlide = document.createElement("div");
+            introSlide.classList = "introSlide";
+            container.appendChild(introSlide);
+
+            const introSlideTitle = document.createElement("div");
+            introSlideTitle.classList = "introSlideTitle";
+            introSlideTitle.textContent = "Rectangle";
+            introSlide.appendChild(introSlideTitle);
+
+            container.appendChild(introSlide);
+        }
+
+        function delete_slide(index){
+            slides.slice(index, 1);
+
+            updateSlides();
+        }
+
+        function createSampleSlides(){
+
+slides.push(new slide("Classification", "File:Symmetriesofsquare. A square is a special case of a rectangle" ));slides.push(new slide("short des
