@@ -2,8 +2,8 @@
 WikiNoteTaker Web App for SVH Hacks 2020
 
 What it does:
--Extracts information from Wikipedia
--Converts and summarizes that information into slides
+-Extracts information from Wikipedia \n
+-Converts and summarizes that information into slides \n
 -Allows for editing, adding, and deleting slides
 -Allows for downloading the slides as a pdf file
 
