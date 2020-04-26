@@ -1,14 +1,12 @@
 const container = document.querySelector("#container");
 const title = document.querySelector("#title");
-const downloadButton = document.querySelector("#download");
+const downloadButton = document.querySelector("#submit");
 
 let titleString = decodeURIComponent(window.location.search);
 titleString = titleString.substring(titleString.indexOf("=") + 1);
 title.textContent = "WIKI Notes";
 
 downloadButton.addEventListener("click", function(){
-
-
 
 });
 

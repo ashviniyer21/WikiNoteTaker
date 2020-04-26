@@ -1,5 +1,6 @@
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.html.simpleparser.HTMLWorker;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.Image;
 
@@ -9,7 +10,7 @@ import java.io.FileOutputStream;
 import java.io.*;
 import java.util.HashMap;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
-import org.jsoup.Jsoup;
+import com.pdfcrowd.Pdfcrowd;
 import org.w3c.tidy.Tidy;
 
 public class Filterer {
@@ -51,33 +52,22 @@ public class Filterer {
 
     }
 
-    public static void getPDF(String subject) throws IOException, DocumentException {
-        URL url = new URL("https://en.wikipedia.org/w/index.php?action=raw&title=" + subject.replace(" ", "_"));
-        StringBuilder text = new StringBuilder();
-        Document document = new Document();
-        PdfWriter.getInstance(document, new FileOutputStream("notes.pdf"));
-        document.open();
-        Font font = FontFactory.getFont(FontFactory.COURIER, 13, BaseColor.BLACK);
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()))) {
-            String line;
-            while (null != (line = br.readLine())) {
-                line = line.trim();
-                text.append(line).append("\n");
-                Paragraph chunk = new Paragraph(filter(line) + "\n", font);
-                if(line.length() > 0){
-                    document.add(chunk);
-                }
-            }
+    public static void getPDF(String code) throws IOException {
+        try {
+            Pdfcrowd.HtmlToPdfClient client =
+                    new Pdfcrowd.HtmlToPdfClient("ashviniyer21", "da6365e8ef9caf3d31ec3cd7b3c3dcb1");
+            client.convertStringToFile(code, "Notes.pdf");
+        } catch(Pdfcrowd.Error why) {
+            System.err.println("Pdfcrowd Error: " + why);
+            throw why;
+        } catch(IOException why) {
+            System.err.println("IO Error: " + why);
+            throw why;
         }
-        String imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/CIRCLE_LINES.svg/440px-CIRCLE_LINES.svg.png";
-        Image image = Image.getInstance(new URL(imageUrl));
-        document.add(image);
-
-        document.close();
     }
 
     public static String getHTMLStuff(String subject) throws IOException {
-        URL url = new URL("https://en.wikipedia.org/w/index.php?action=raw&title=" + subject.replace(" ", "_"));
+        URL url = new URL(subject);
         StringBuilder text = new StringBuilder();
         Font font = FontFactory.getFont(FontFactory.COURIER, 13, BaseColor.BLACK);
         try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()))) {

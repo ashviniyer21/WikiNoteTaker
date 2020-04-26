@@ -1,4 +1,7 @@
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,13 +21,16 @@ public class PDFServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
         String s = WikiServlet.getLastHTMLCode();
-        try {
-            Filterer.getPDF2(s);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Filterer.getPDF(s);
         downloadPDF(request, response);
-        PrintWriter out = response.getWriter();
+//        PrintWriter out = response.getWriter();
+//        out.println("<html>\n" +
+//                "<body>\n" +
+//                "<object data=\"notes.pdf\" type=\"application/pdf\" width=\"100%\" height=\"100%\">\n" +
+//                "    <p>Alternative text - include a link <a href=\"notes.pdf\">to the PDF!</a></p>\n" +
+//                "</object>\n" +
+//                "</body>\n" +
+//                "</html>");
 //        out.println(s);
 //        out.println("<html>");
 //        out.println("<head>");

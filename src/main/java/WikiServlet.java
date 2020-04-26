@@ -1,8 +1,3 @@
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.PdfWriter;
-
-import javax.print.Doc;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +9,14 @@ import java.util.HashMap;
 public class WikiServlet extends HttpServlet {
     private static String lastString = "";
     private static String lastHTMLCode = "";
+    public static final String HTML_END = "\n" +
+            "            updateSlides();\n" +
+            "\n" +
+            "        }\n" +
+            "    </script>\n" +
+            "</body>\n" +
+            "</html>\n" +
+            "\n";
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -586,14 +589,7 @@ public class WikiServlet extends HttpServlet {
                             //"slides.push(new slide(\"" + value + "\", \"" + slideContent.get(value) + "\" ));"
                      ;
                 }
-                lastHTMLCode += "\n" +
-                "            updateSlides();\n" +
-                "\n" +
-                "        }\n" +
-                "    </script>\n" +
-                "</body>\n" +
-                "</html>\n" +
-                "\n";
+                lastHTMLCode += HTML_END;
 
         out.println(lastHTMLCode);
         out.flush();
