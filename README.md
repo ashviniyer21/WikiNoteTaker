@@ -14,4 +14,4 @@ Future Plans:
 -Improve filtering  
 -Add support for images
 - Use machine learning structures in order to optimize the project
-&nbsp;&nbsp;&nbsp; - Make it eventually able to locate most reliable sources of information by number of hits per webpage and other factors.
+- Make it eventually able to locate most reliable sources of information by number of hits per webpage and other factors.
