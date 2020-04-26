@@ -9,7 +9,9 @@ What it does:
 
 Future Plans:  
 -Deploy on a website that supports POST (github pages only supports static websites)  
-&nbsp;&nbsp;&nbsp;-currently running on a local tomcat server  
+&nbsp;&nbsp;&nbsp;-Currently running on a local tomcat server  
 -Make PDF look better  
 -Improve filtering  
 -Add support for images
+- Use machine learning structures in order to optimize the project
+&nbsp;&nbsp;&nbsp; - Make it eventually able to locate most reliable sources of information by number of hits per webpage and other factors.
