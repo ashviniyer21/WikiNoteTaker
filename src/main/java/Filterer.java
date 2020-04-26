@@ -1,56 +1,10 @@
-
-import com.itextpdf.text.*;
-import com.itextpdf.text.html.simpleparser.HTMLWorker;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.Image;
-
 import java.io.IOException;
 import java.net.URL;
-import java.io.FileOutputStream;
 import java.io.*;
 import java.util.HashMap;
-import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.pdfcrowd.Pdfcrowd;
-import org.w3c.tidy.Tidy;
 
 public class Filterer {
-    private static final String API_KEY = "869c9de4e1ea4246968439ef10d55c36";
-    public static void main(String... args) throws IOException, DocumentException {
-        String subject = "Circle";
-        URL url = new URL("https://en.wikipedia.org/w/index.php?action=raw&title=" + subject.replace(" ", "_"));
-        StringBuilder text = new StringBuilder();
-        Document document = new Document();
-        PdfWriter.getInstance(document, new FileOutputStream("notes.pdf"));
-        document.open();
-        Font font = FontFactory.getFont(FontFactory.COURIER, 13, BaseColor.BLACK);
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()))) {
-            String line;
-            while (null != (line = br.readLine())) {
-                line = line.trim();
-//                if (!line.startsWith("|")
-//                        && !line.startsWith("{")
-//                        && !line.startsWith("}")
-//                        && !line.startsWith("<center>")
-//                        && !line.startsWith("---")) {
-                    text.append(line).append("\n");
-                    Paragraph chunk = new Paragraph(filter(line) + "\n", font);
-                    if(line.length() > 0){
-                        document.add(chunk);
-                    }
-//                }
-            }
-        }
-        String imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/CIRCLE_LINES.svg/440px-CIRCLE_LINES.svg.png";
-        Image image = Image.getInstance(new URL(imageUrl));
-        document.add(image);
-        String t = filter(text.toString());
-
-        document.close();
-        System.out.println(getHTMLStuff(subject));
-
-
-
-    }
 
     public static void getPDF(String code) throws IOException {
         try {
@@ -66,27 +20,6 @@ public class Filterer {
         }
     }
 
-    public static String getHTMLStuff(String subject) throws IOException {
-        URL url = new URL(subject);
-        StringBuilder text = new StringBuilder();
-        Font font = FontFactory.getFont(FontFactory.COURIER, 13, BaseColor.BLACK);
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()))) {
-            String line;
-            while (null != (line = br.readLine())) {
-                line = line.trim();
-                text.append((line)).append("\n");
-            }
-        }
-        return text.toString();
-    }
-    private static String initialFilter(String s){
-//        if(s!= null){
-//            org.jsoup.nodes.Document document = Jsoup.parse(s);
-//            document.select("img").remove();
-//            s = document.toString();
-//        }
-        return s;
-    }
     private static String filter(String s){
         String newS = "";
         String tempS = "";
@@ -106,11 +39,7 @@ public class Filterer {
             } else if(s.charAt(i) == '{'){
                 oCount++;
             }
-//            if(c == '<' || c == '{' || c =='[' ){
-//                c = '(';
-//            } else if(c == '>' || c == '}' || c == ']'){
-//                c = ')';
-//            }
+
             if (c == '.' && c2 == ' ') {
                 tempS = "";
                 bad = false;
@@ -133,7 +62,7 @@ public class Filterer {
                 oCount--;
             }
         }
-        return newS.toString();
+        return newS;
     }
 
     public static HashMap<String, String> getValues(String subject) throws IOException {
@@ -149,21 +78,14 @@ public class Filterer {
             String line;
             StringBuilder text = new StringBuilder();
             String header = "";
-            boolean hasCategory = false;
             while (null != (line = br.readLine()) && count < 8) {
                 line = (line.trim());
                 if(line.length() > 0 && line.charAt(0) == '='){
-                    hasCategory = true;
                     if(count > 1){
-                        if(count == 1){
-//                            String stuff = filter(text.toString());
-//                            values.put(stuff.substring(0, 17), stuff.substring(17));
+                        if(isGoodToPut(header, filter((text.toString())))){
+                            values.put(header.replaceAll("=", ""), filter((text.toString())).replaceAll("Image", "").replaceAll("Retrieved", ""));
                         } else {
-                            if(isGoodToPut(header, filter(initialFilter(text.toString())))){
-                                values.put(header.replaceAll("=", ""), filter(initialFilter(text.toString())).replaceAll("Image", "").replaceAll("Retrieved", ""));
-                            } else {
-                                count--;
-                            }
+                            count--;
                         }
                         header = line;
                         text = new StringBuilder();
@@ -175,21 +97,6 @@ public class Filterer {
             }
         }
         return values;
-    }
-    public static void getPDF2(String htmlCode) throws Exception {
-//        Document document = new Document();
-//        PdfWriter.getInstance(document, new FileOutputStream("notes.pdf"));
-//        document.open();
-//        document.close();
-        Tidy tidy = new Tidy();
-        tidy.setXHTML(true);
-        tidy.setQuiet(true);
-        tidy.setShowWarnings(false);
-        PdfRendererBuilder builder = new PdfRendererBuilder();
-        builder.useFastMode();
-        builder.withUri(tidy.parseDOM(new ByteArrayInputStream(htmlCode.getBytes()), new FileOutputStream("document.xml")).toString());
-        builder.toStream(new FileOutputStream("notes.pdf"));
-        builder.run();
     }
 
     private static boolean isGoodToPut(String header, String body){

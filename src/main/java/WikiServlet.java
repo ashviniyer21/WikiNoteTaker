@@ -7,9 +7,8 @@ import java.util.HashMap;
 
 @WebServlet(name = "WikiServlet", urlPatterns = {"/wiki"})
 public class WikiServlet extends HttpServlet {
-    private static String lastString = "";
     private static String lastHTMLCode = "";
-    public static final String HTML_END = "\n" +
+    private static final String HTML_END = "\n" +
             "            updateSlides();\n" +
             "\n" +
             "        }\n" +
@@ -22,174 +21,7 @@ public class WikiServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
         String s = request.getParameter("title");
-        lastString = s;
-        /*
-        Version 1
-         */
-//        try {
-//            Filterer.getPDF(s);
-//        } catch (DocumentException e) {
-//            e.printStackTrace();
-//        }
-//        downloadPDF(request, response);
         PrintWriter out = response.getWriter();
-//        out.println("<html>");
-//        out.println("<head>");
-//        out.println("<title>Title of the document</title>");
-//        out.println("</head>");
-//        out.println("<body>");
-//        out.println("<h1>PDF Example</h1>");
-//        out.println("<p>Open a PDF file <a href=\"PDF on " + s + ".pdf\">example</a>.</p>");
-//        out.println("</body>");
-//        out.println("</html>");
-        /*
-        Version 2
-         */
-//        String s1 = "<!DOCTYPE html>\n" +
-//                "<html lang=\"en\">\n" +
-//                "<head>\n" +
-//                "    <meta charset=\"UTF-8\">\n" +
-//                "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
-//                "<!--    <link rel = \"stylesheet\" type = \"text/css\" href = \"css/slides.css\" />-->\n" +
-//                "    <style>\n" +
-//                "        body{\n" +
-//                "            font-family: Arial, Helvetica, sans-serif;\n" +
-//                "            background-color: #121212;\n" +
-//                "            color: white;\n" +
-//                "            text-align: center;\n" +
-//                "        }\n" +
-//                "\n" +
-//                "        h1{\n" +
-//                "            text-transform: uppercase;\n" +
-//                "            font-size: 48px;\n" +
-//                "            line-height: 0;\n" +
-//                "            line-height: 1.5;\n" +
-//                "        }\n" +
-//                "\n" +
-//                "        #container{\n" +
-//                "\n" +
-//                "            margin: 1em auto;\n" +
-//                "            width: 75%;\n" +
-//                "            min-width: 450px;\n" +
-//                "            border: 15px solid red;\n" +
-//                "            background-color: tomato;\n" +
-//                "            border-radius: 10px;\n" +
-//                "            display: flex;\n" +
-//                "            flex-direction: column;\n" +
-//                "        }\n" +
-//                "\n" +
-//                "        .slide{\n" +
-//                "            text-align: center;\n" +
-//                "            margin: 2em auto;\n" +
-//                "            width: 90%;\n" +
-//                "            border: 10px solid black;\n" +
-//                "            border-radius: 5px;\n" +
-//                "            background-color: #191919 ;\n" +
-//                "            /*\n" +
-//                "            display: flex;\n" +
-//                "            flex-direction: column;\n" +
-//                "            */\n" +
-//                "            line-height: 1.5;\n" +
-//                "            color: white;\n" +
-//                "            overflow: hidden;\n" +
-//                "        }\n" +
-//                "\n" +
-//                "        .slideHeading{\n" +
-//                "\n" +
-//                "            font-size: 24px;\n" +
-//                "            border: 2px solid white;\n" +
-//                "\n" +
-//                "        }\n" +
-//                "\n" +
-//                "        .content{\n" +
-//                "            font-size: 18px;\n" +
-//                "            text-align: left;\n" +
-//                "            border: 2px solid white;\n" +
-//                "        }\n" +
-//                "    </style>\n" +
-//                "    <title> Notes </title>\n" +
-//                "\n" +
-//                "</head>\n" +
-//                "<body>\n" +
-//                "<h1 id = \"title\"> </h1>\n" +
-//                "<div id = \"container\">\n" +
-//                "\n" +
-//                "</div>\n" +
-//                "<script>\n" +
-//                "    const container = document.querySelector(\"#container\");\n" +
-//                "    const title = document.querySelector(\"#title\");\n" +
-//                "\n" +
-//                "    let titleString = decodeURIComponent(window.location.search);\n" +
-//                "    titleString = titleString.substring(titleString.indexOf(\"=\") + 1);\n" +
-//                "\n" +
-//                "    title.textContent = titleString;\n" +
-//                "\n" +
-//                "    let slides = [];\n" +
-//                "\n" +
-//                "\n" +
-//                "    createSampleSlides();\n" +
-//                "\n" +
-//                "    function slide(heading, body){\n" +
-//                "        this.heading = heading;\n" +
-//                "        this.body = body; // paragraph text\n" +
-//                "    }\n" +
-//                "\n" +
-//                "    function createSlides(){\n" +
-//                "\n" +
-//                "        for(let i=0; i<slides.length; i++){\n" +
-//                "\n" +
-//                "            const slide = document.createElement(\"div\");\n" +
-//                "            slide.classList = \"slide\";\n" +
-//                "            slide.value = i;\n" +
-//                "\n" +
-//                "            let slideTitle = slides[i].heading;\n" +
-//                "            let slideBody = slides[i].body;\n" +
-//                "            sentences = slideBody.split(\". \");\n" +
-//                "\n" +
-//                "            const sildeHeading = document.createElement(\"div\");\n" +
-//                "            sildeHeading.textContent = slideTitle;\n" +
-//                "            sildeHeading.classList = \"slideHeading\";\n" +
-//                "\n" +
-//                "            const content = document.createElement(\"div\");\n" +
-//                "            content.classList = \"content\";\n" +
-//                "\n" +
-//                "            const list = document.createElement(\"ul\");  //create list for bullet points\n" +
-//                "\n" +
-//                "            for(let j=0; j<sentences.length; j++){\n" +
-//                "                const bullet = document.createElement(\"li\");\n" +
-//                "                bullet.classList = \"bullet\";\n" +
-//                "                bullet.textContent = sentences[j];\n" +
-//                "                list.appendChild(bullet);\n" +
-//                "            }\n" +
-//                "\n" +
-//                "            content.appendChild(list);\n" +
-//                "\n" +
-//                "            slide.appendChild(sildeHeading);\n" +
-//                "            slide.appendChild(content);\n" +
-//                "            container.appendChild(slide);\n" +
-//                "\n" +
-//                "        }\n" +
-//                "    }\n" +
-//                "\n" +
-//                "    function createSampleSlides(){";
-//                String s3 = "\n" +
-//                "        createSlides();\n" +
-//                "\n" +
-//                "    }\n" +
-//                "</script>\n" +
-//                "</body>\n" +
-//                "</html>";
-//        out.println(s1);
-//        HashMap<String, String> slideContent = Filterer.getValues(s);
-//        boolean first = true;
-//        for(String value: slideContent.keySet()){
-//                out.println("slides.push(new slide(\"" + oFilter(value) + "\", \"" + oFilter(slideContent.get(value)) + "\" ));");
-//        }
-//        out.println(s3);
-
-        /*
-        Version 3
-         */
         lastHTMLCode = "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
                 "<head>\n" +
@@ -584,46 +416,12 @@ public class WikiServlet extends HttpServlet {
                 HashMap<String, String> slideContent = Filterer.getValues(s);
                 System.out.println(slideContent.size());
                 for(String value: slideContent.keySet()){
-                    lastHTMLCode +=
-                            "slides.push(new Slide(\"" + value + "\", \"" + slideContent.get(value) + "\", false ));";
-                            //"slides.push(new slide(\"" + value + "\", \"" + slideContent.get(value) + "\" ));"
-                     ;
+                    lastHTMLCode += "slides.push(new Slide(\"" + value + "\", \"" + slideContent.get(value) + "\", false ));";
                 }
                 lastHTMLCode += HTML_END;
 
         out.println(lastHTMLCode);
         out.flush();
-    }
-
-    public void downloadPDF(HttpServletRequest request, HttpServletResponse response)
-            throws IOException{
-        response.setContentType("application/pdf");
-        try {
-            File f = new File("notes.pdf");
-            FileInputStream fis = new FileInputStream(f);
-            DataOutputStream os = new DataOutputStream(response.getOutputStream());
-            response.setHeader("Content-Length",String.valueOf(f.length()));
-            byte[] buffer = new byte[1024];
-            int len = 0;
-            while ((len = fis.read(buffer)) >= 0) {
-                os.write(buffer, 0, len);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    private static String oFilter(String s){
-//        for(int i = 0; i < s.length(); i++){
-//            if(!Character.isLetter(s.charAt(i)) && !Character.isDigit(s.charAt(i))){
-//                s.replace(Character.toString(s.charAt(i)), "");
-//                i--;
-//            }
-//        }
-        return s;
-    }
-
-    public static String getLastString(){
-        return lastString;
     }
 
     public static String getLastHTMLCode(){
