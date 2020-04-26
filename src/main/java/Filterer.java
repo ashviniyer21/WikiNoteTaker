@@ -21,11 +21,16 @@ public class Filterer {
         int oCount = 0;
         boolean skip = false;
         boolean bad = false;
+        boolean hasLet = true;
         for(int i = 0; i < s.length(); i++){
             char c = s.charAt(i);
             char c2 = ' ';
+            char c3 = ' ';
             if(i < s.length() - 1){
                 c2 = s.charAt(i+1);
+            }
+            if(i < s.length() - 2){
+                c3 = s.charAt(i+2);
             }
             if(s.charAt(i) == '<'){
                 count++;
@@ -37,18 +42,28 @@ public class Filterer {
             if (c == '.' && c2 == ' ') {
                 tempS = "";
                 bad = false;
+                hasLet = false;
             }
             if(c == '.' && c2 != ' ' && !Character.isDigit(c2)){
                 skip = true;
             }  else if(c == '.'){
                 skip = false;
             }
-            if((Character.isLetterOrDigit(c) || c == '.' || c == ' ' || c == '-' || c == '=' || c == '(' || c == ')') && !skip && count == 0 && oCount == 0 && !bad){
-                newS += (c);
-                tempS += (c);
-            }
-            if(tempS.equals("Image") || tempS.equals("Retrieved")){
+            if(tempS.equals("Image") || tempS.equals("Retrieved") || tempS.equals("File")){
                 bad = true;
+            }
+            if((Character.isLetterOrDigit(c) || c == '.' || c == ' ' || c == '-' || c == '=' || c == '(' || c == ')') && !skip && count == 0 && oCount == 0 && !bad){
+                boolean run = true;
+                if(!hasLet && Character.isDigit(c)){
+                    bad = true;
+                    run = false;
+                } else if(Character.isLetter(c)){
+                    hasLet = true;
+                }
+                if(run){
+                    newS += (c);
+                    tempS += (c);
+                }
             }
             if(s.charAt(i) == '>'){
                 count--;
@@ -83,7 +98,7 @@ public class Filterer {
                 if(line.length() > 0 && line.charAt(0) == '='){
                     if(count > 1){
                         if(isGoodToPut(header, filter((text.toString())))){
-                            values.put(header.replaceAll("=", ""), filter((text.toString())).replaceAll("Image", "").replaceAll("Retrieved", ""));
+                            values.put(header.replaceAll("=", ""), filter((text.toString().replaceAll("Retrieved on ", ""))).replaceAll("Image", "").replaceAll("File", ""));
                         } else {
                             count--;
                         }
