@@ -11,4 +11,5 @@ Future Plans:
 -Deploy on a website that supports POST (github pages only supports static websites)  
 &nbsp;&nbsp;&nbsp;-currently running on a local tomcat server  
 -Make PDF look better  
--Improve filtering
+-Improve filtering  
+-Add support for images
