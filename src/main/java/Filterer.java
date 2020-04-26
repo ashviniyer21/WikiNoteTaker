@@ -59,6 +59,8 @@ public class Filterer {
                     run = false;
                 } else if(Character.isLetter(c)){
                     hasLet = true;
+                } else if(c == '(' && !hasLet){
+                    run = false;
                 }
                 if(run){
                     newS += (c);

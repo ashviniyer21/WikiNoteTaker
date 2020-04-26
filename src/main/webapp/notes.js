@@ -57,7 +57,7 @@ function updateSlides(){
                     const bullet = document.createElement("li");
                     bullet.classList = "bullet";
                     bullet.textContent = sentences[j];
-                    if(bullet.textContent != "") list.appendChild(bullet);
+                    if(bullet.textContent.length > 7) list.appendChild(bullet);
                 }
 
 

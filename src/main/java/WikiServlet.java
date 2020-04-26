@@ -218,7 +218,7 @@ public class WikiServlet extends HttpServlet {
                 "\n" +
                 "        }\n" +
                 "    </style>\n" +
-                "    <title> Notes </title>\n" +
+                "    <title> WikiNotes </title>\n" +
                 "\n" +
                 "</head>\n" +
                 "<body>\n" +
@@ -230,7 +230,7 @@ public class WikiServlet extends HttpServlet {
                 "    <h2> Download Notes </h2>\n" +
                 "    <div id = \"download\"> </div>\n" +
                 "    <div id = \"submit\">\n" +
-                "        <button> Create Notes </button> <br>\n" +
+                "        <button> Download Notes </button> <br>\n" +
                 "    </div>\n" +
                 "</form>\n" +
                 "\n" +
@@ -296,7 +296,7 @@ public class WikiServlet extends HttpServlet {
                 "                            const bullet = document.createElement(\"li\");\n" +
                 "                            bullet.classList = \"bullet\";\n" +
                 "                            bullet.textContent = sentences[j];\n" +
-                "                            if(bullet.textContent != \"\") list.appendChild(bullet);\n" +
+                "                            if(bullet.textContent.length > 7) list.appendChild(bullet);\n" +
                 "                        }\n" +
                 "\n" +
                 "\n" +
