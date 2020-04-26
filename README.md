@@ -15,3 +15,8 @@ Future Plans:
 - Add support for images
 - Use machine learning structures in order to optimize the project
 - Make it eventually able to locate most reliable sources of information by number of hits per webpage and other factors.
+
+Authors:
+Ashvin Iyer - https://github.com/ashviniyer21
+Siddharth Nath - https://github.com/SidNath21
+Ritvik Pandey - https://github.com/ritvikp22
