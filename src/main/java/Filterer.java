@@ -1,92 +1,19 @@
-
-import com.itextpdf.text.*;
-import com.itextpdf.text.html.simpleparser.HTMLWorker;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.Image;
-
 import java.io.IOException;
 import java.net.URL;
-import java.io.FileOutputStream;
 import java.io.*;
 import java.util.HashMap;
-import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.pdfcrowd.Pdfcrowd;
-import org.w3c.tidy.Tidy;
 
+/**
+ * Class used to get data for the slides
+ */
 public class Filterer {
-    private static final String API_KEY = "869c9de4e1ea4246968439ef10d55c36";
-    public static void main(String... args) throws IOException, DocumentException {
-        String subject = "Circle";
-        URL url = new URL("https://en.wikipedia.org/w/index.php?action=raw&title=" + subject.replace(" ", "_"));
-        StringBuilder text = new StringBuilder();
-        Document document = new Document();
-        PdfWriter.getInstance(document, new FileOutputStream("notes.pdf"));
-        document.open();
-        Font font = FontFactory.getFont(FontFactory.COURIER, 13, BaseColor.BLACK);
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()))) {
-            String line;
-            while (null != (line = br.readLine())) {
-                line = line.trim();
-//                if (!line.startsWith("|")
-//                        && !line.startsWith("{")
-//                        && !line.startsWith("}")
-//                        && !line.startsWith("<center>")
-//                        && !line.startsWith("---")) {
-                    text.append(line).append("\n");
-                    Paragraph chunk = new Paragraph(filter(line) + "\n", font);
-                    if(line.length() > 0){
-                        document.add(chunk);
-                    }
-//                }
-            }
-        }
-        String imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/CIRCLE_LINES.svg/440px-CIRCLE_LINES.svg.png";
-        Image image = Image.getInstance(new URL(imageUrl));
-        document.add(image);
-        String t = filter(text.toString());
 
-        document.close();
-        System.out.println(getHTMLStuff(subject));
-
-
-
-    }
-
-    public static void getPDF(String code) throws IOException {
-        try {
-            Pdfcrowd.HtmlToPdfClient client =
-                    new Pdfcrowd.HtmlToPdfClient("ashviniyer21", "da6365e8ef9caf3d31ec3cd7b3c3dcb1");
-            client.convertStringToFile(code, "Notes.pdf");
-        } catch(Pdfcrowd.Error why) {
-            System.err.println("Pdfcrowd Error: " + why);
-            throw why;
-        } catch(IOException why) {
-            System.err.println("IO Error: " + why);
-            throw why;
-        }
-    }
-
-    public static String getHTMLStuff(String subject) throws IOException {
-        URL url = new URL(subject);
-        StringBuilder text = new StringBuilder();
-        Font font = FontFactory.getFont(FontFactory.COURIER, 13, BaseColor.BLACK);
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()))) {
-            String line;
-            while (null != (line = br.readLine())) {
-                line = line.trim();
-                text.append((line)).append("\n");
-            }
-        }
-        return text.toString();
-    }
-    private static String initialFilter(String s){
-//        if(s!= null){
-//            org.jsoup.nodes.Document document = Jsoup.parse(s);
-//            document.select("img").remove();
-//            s = document.toString();
-//        }
-        return s;
-    }
+    /**
+     * Filters out the content from the read from a line of html to be used for the slides
+     * @param s the line that needs to be filters
+     * @return the filtered line
+     */
     private static String filter(String s){
         String newS = "";
         String tempS = "";
@@ -106,11 +33,7 @@ public class Filterer {
             } else if(s.charAt(i) == '{'){
                 oCount++;
             }
-//            if(c == '<' || c == '{' || c =='[' ){
-//                c = '(';
-//            } else if(c == '>' || c == '}' || c == ']'){
-//                c = ')';
-//            }
+
             if (c == '.' && c2 == ' ') {
                 tempS = "";
                 bad = false;
@@ -133,9 +56,15 @@ public class Filterer {
                 oCount--;
             }
         }
-        return newS.toString();
+        return newS;
     }
 
+    /**
+     * Returns all of the headers and content for each slide that has to be created
+     * @param subject the subject of topic that has been searched
+     * @return a HashMap <Header, Content> to be used for creating the slides
+     * @throws IOException if the topic is not found as a wikipedia page
+     */
     public static HashMap<String, String> getValues(String subject) throws IOException {
         HashMap<String, String> values = new HashMap<>();
         URL url;
@@ -149,21 +78,14 @@ public class Filterer {
             String line;
             StringBuilder text = new StringBuilder();
             String header = "";
-            boolean hasCategory = false;
             while (null != (line = br.readLine()) && count < 8) {
                 line = (line.trim());
                 if(line.length() > 0 && line.charAt(0) == '='){
-                    hasCategory = true;
                     if(count > 1){
-                        if(count == 1){
-//                            String stuff = filter(text.toString());
-//                            values.put(stuff.substring(0, 17), stuff.substring(17));
+                        if(isGoodToPut(header, filter((text.toString())))){
+                            values.put(header.replaceAll("=", ""), filter((text.toString())).replaceAll("Image", "").replaceAll("Retrieved", ""));
                         } else {
-                            if(isGoodToPut(header, filter(initialFilter(text.toString())))){
-                                values.put(header.replaceAll("=", ""), filter(initialFilter(text.toString())).replaceAll("Image", "").replaceAll("Retrieved", ""));
-                            } else {
-                                count--;
-                            }
+                            count--;
                         }
                         header = line;
                         text = new StringBuilder();
@@ -176,22 +98,13 @@ public class Filterer {
         }
         return values;
     }
-    public static void getPDF2(String htmlCode) throws Exception {
-//        Document document = new Document();
-//        PdfWriter.getInstance(document, new FileOutputStream("notes.pdf"));
-//        document.open();
-//        document.close();
-        Tidy tidy = new Tidy();
-        tidy.setXHTML(true);
-        tidy.setQuiet(true);
-        tidy.setShowWarnings(false);
-        PdfRendererBuilder builder = new PdfRendererBuilder();
-        builder.useFastMode();
-        builder.withUri(tidy.parseDOM(new ByteArrayInputStream(htmlCode.getBytes()), new FileOutputStream("document.xml")).toString());
-        builder.toStream(new FileOutputStream("notes.pdf"));
-        builder.run();
-    }
 
+    /**
+     * Function that determines if the header and body match specifications to be added to the slides
+     * @param header the header string to be added
+     * @param body the body string to be added
+     * @return true if it should be added to the slides; otherwise false
+     */
     private static boolean isGoodToPut(String header, String body){
         if(header.replaceAll("=", "").equals("")){
             return false;
