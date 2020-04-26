@@ -8,6 +8,6 @@ What it does:
 -Allows for downloading the slides as a pdf file  
 
 Future Plans:  
--Deploy on a website that supports POST (github pages only supports static websites) 
+-Deploy on a website that supports POST (github pages only supports static websites)  
    -currently running on a local tomcat server  
 -Make PDF look better  
