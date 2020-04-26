@@ -5,6 +5,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.HashMap;
 
+/**
+ * Class used to link search bar to website slides
+ */
 @WebServlet(name = "WikiServlet", urlPatterns = {"/wiki"})
 public class WikiServlet extends HttpServlet {
     private static String lastHTMLCode = "";
@@ -17,6 +20,12 @@ public class WikiServlet extends HttpServlet {
             "</html>\n" +
             "\n";
 
+    /**
+     * Displays the website showing the slides
+     * @param request gets the input stream of data, which is the value of the search bar
+     * @param response gets the output stream to print HTML code to
+     * @throws IOException if the request or response are invalid
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
@@ -424,6 +433,11 @@ public class WikiServlet extends HttpServlet {
         out.flush();
     }
 
+    /**
+     * Returns the last value of the HTML code used on the slides website as a string
+     * Used to generate the PDF
+     * @return String of HTML code
+     */
     public static String getLastHTMLCode(){
         return lastHTMLCode;
     }

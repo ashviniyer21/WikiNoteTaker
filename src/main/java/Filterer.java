@@ -4,22 +4,16 @@ import java.io.*;
 import java.util.HashMap;
 import com.pdfcrowd.Pdfcrowd;
 
+/**
+ * Class used to get data for the slides
+ */
 public class Filterer {
 
-    public static void getPDF(String code) throws IOException {
-        try {
-            Pdfcrowd.HtmlToPdfClient client =
-                    new Pdfcrowd.HtmlToPdfClient("ashviniyer21", "da6365e8ef9caf3d31ec3cd7b3c3dcb1");
-            client.convertStringToFile(code, "Notes.pdf");
-        } catch(Pdfcrowd.Error why) {
-            System.err.println("Pdfcrowd Error: " + why);
-            throw why;
-        } catch(IOException why) {
-            System.err.println("IO Error: " + why);
-            throw why;
-        }
-    }
-
+    /**
+     * Filters out the content from the read from a line of html to be used for the slides
+     * @param s the line that needs to be filters
+     * @return the filtered line
+     */
     private static String filter(String s){
         String newS = "";
         String tempS = "";
@@ -65,6 +59,12 @@ public class Filterer {
         return newS;
     }
 
+    /**
+     * Returns all of the headers and content for each slide that has to be created
+     * @param subject the subject of topic that has been searched
+     * @return a HashMap <Header, Content> to be used for creating the slides
+     * @throws IOException if the topic is not found as a wikipedia page
+     */
     public static HashMap<String, String> getValues(String subject) throws IOException {
         HashMap<String, String> values = new HashMap<>();
         URL url;
@@ -99,6 +99,12 @@ public class Filterer {
         return values;
     }
 
+    /**
+     * Function that determines if the header and body match specifications to be added to the slides
+     * @param header the header string to be added
+     * @param body the body string to be added
+     * @return true if it should be added to the slides; otherwise false
+     */
     private static boolean isGoodToPut(String header, String body){
         if(header.replaceAll("=", "").equals("")){
             return false;
